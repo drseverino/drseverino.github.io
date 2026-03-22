@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Verificação</title>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      text-align: center;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+  
+  <script>
+  
+  function ativarBotao() {
+    
+    const botao = document.getElementById("Botao");
+
+    botao.style.display = "block";
+
+    botao.scrollIntoView({ behavior: 'smooth' });
+}
+
+function acaoBotao() {
+    alert("Sucesso! Você validou o reCAPTCHA.");
+}
+
+  </script>
+  
+</head>
+<body>
+
+  <div class="container">
+    
+      <div class="g-recaptcha" data-sitekey="6LcyyJIsAAAAAJKs7OLvSkX-5KcM7wkKOKcwj3Z3" data-callback="ativarBotao"></div>
+
+      <br/>
+    <a href="principal.html">
+<button id="Botao" style="display: none;" onclick="acaoBotao()">
+    Continuar para o Site
+</button>
+    </a>
+    
+    </form>
+  </div>
+
+</body>
+</html>
