@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Cobrinha</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      flex-direction: column;
+      margin: 0;
+    }
+
+    canvas {
+      background: black;
+      border: 2px solid white;
+      touch-action: none;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Cobrinha</h1>
+<canvas id="game" width="400" height="400"></canvas>
+  
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const grid = 10;
+let count = 0;
+
+let snake = {
+  x: 160,
+  y: 160,
+  dx: grid,
+  dy: 0,
+  cells: [],
+  maxCells: 4
+};
+
+let apple = {
+  x: 320,
+  y: 320
+};
+
+let score = 0;
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+canvas.addEventListener("touchstart", function(e) {
+  const touch = e.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+}, false);
+
+canvas.addEventListener("touchend", function(e) {
+  const touch = e.changedTouches[0];
+  const dx = touch.clientX - touchStartX;
+  const dy = touch.clientY - touchStartY;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+
+    if (dx > 0 && snake.dx === 0) {
+      snake.dx = grid;
+      snake.dy = 0;
+    } else if (dx < 0 && snake.dx === 0) {
+      snake.dx = -grid;
+      snake.dy = 0;
+    }
+  } else {
+ 
+    if (dy > 0 && snake.dy === 0) {
+      snake.dy = grid;
+      snake.dx = 0;
+    } else if (dy < 0 && snake.dy === 0) {
+      snake.dy = -grid;
+      snake.dx = 0;
+    }
+  }
+}, false);
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "ArrowLeft" && snake.dx === 0) {
+    snake.dx = -grid;
+    snake.dy = 0;
+  }
+  else if (e.key === "ArrowUp" && snake.dy === 0) {
+    snake.dy = -grid;
+    snake.dx = 0;
+  }
+  else if (e.key === "ArrowRight" && snake.dx === 0) {
+    snake.dx = grid;
+    snake.dy = 0;
+  }
+  else if (e.key === "ArrowDown" && snake.dy === 0) {
+    snake.dy = grid;
+    snake.dx = 0;
+  }
+});
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function loop() {
+  requestAnimationFrame(loop);
+
+  if (++count < 4) return;
+  count = 0;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  snake.x += snake.dx;
+  snake.y += snake.dy;
+
+  if (snake.x < 0) snake.x = canvas.width - grid;
+  else if (snake.x >= canvas.width) snake.x = 0;
+
+  if (snake.y < 0) snake.y = canvas.height - grid;
+  else if (snake.y >= canvas.height) snake.y = 0;
+
+  snake.cells.unshift({x: snake.x, y: snake.y});
+
+  if (snake.cells.length > snake.maxCells) {
+    snake.cells.pop();
+  }
+
+  ctx.fillStyle = "red";
+  ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+  ctx.fillStyle = "lime";
+  snake.cells.forEach(function(cell, index) {
+    ctx.fillRect(cell.x, cell.y, grid - 1, grid - 1);
+
+    if (cell.x === apple.x && cell.y === apple.y) {
+      snake.maxCells++;
+      score++;
+
+      apple.x = getRandomInt(0, 20) * grid;
+      apple.y = getRandomInt(0, 20) * grid;
+    }
+
+    for (let i = index + 1; i < snake.cells.length; i++) {
+      if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+        resetGame();
+      }
+    }
+  });
+
+  ctx.fillStyle = "white";
+  ctx.font = "16px Arial";
+  ctx.fillText("Pontuação: " + score, 10, 20);
+}
+
+function resetGame() {
+  snake.x = 160;
+  snake.y = 160;
+  snake.cells = [];
+  snake.maxCells = 4;
+  snake.dx = grid;
+  snake.dy = 0;
+
+  apple.x = getRandomInt(0, 20) * grid;
+  apple.y = getRandomInt(0, 20) * grid;
+
+  score = 0;
+}
+
+requestAnimationFrame(loop);
+</script>
+
+</body>
+</html>
